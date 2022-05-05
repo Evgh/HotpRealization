@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Authorizer.ViewModels"
+             x:Class="Authorizer.Views.RegistrationPage"
+             BackgroundColor="{StaticResource MyBackground}">
+    
+    <ContentPage.BindingContext>
+        <vm:RegistrationViewModel/>
+    </ContentPage.BindingContext>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Order="Primary" Text="Cancel" Priority="0" Command="{Binding GoBackCommand}"/>
+    </ContentPage.ToolbarItems>
+    
+    <ContentPage.Content>
+        <Grid>
+            <StackLayout 
+                VerticalOptions="Start"
+                Padding="45,150,45,50" 
+                Spacing="15">
+
+                <StackLayout
+                    VerticalOptions="Start"
+                    Margin="0,0,0,30">
+
+                    <StackLayout
+                        VerticalOptions="Start">
+
+                        <Entry 
+                        Placeholder="Login"
+                        Text="{Binding Login}"
+                        ClearButtonVisibility="WhileEditing"/>
+                        <Label 
+                        Margin="5,0,0,0"
+                        Text="{Binding LoginErrorMessage}"
+                        TextColor="Tomato"
+                        FontSize="13"/>
+
+                    </StackLayout>
+
+                    <StackLayout
+                        VerticalOptions="Start">
+
+                        <Entry
+                            Placeholder="Password"
+                            Text="{Binding Password}"
+                            IsPassword="True"
+                            ClearButtonVisibility="WhileEditing"/>
+                        
+                        <Label 
+                            Margin="5,0,0,0"
+                            Text="{Binding PasswordErrorMessage}"
+                            TextColor="Tomato"
+                            FontSize="13"/>
+
+                    </StackLayout>
+
+                    <StackLayout
+                        VerticalOptions="StartAndExpand">
+
+                        <Entry
+                            Placeholder="Repeat password"
+                            Text="{Binding PasswordRepeated}"
+                            IsPassword="True"
+                            ClearButtonVisibility="WhileEditing"/>
+                        
+                        <Label 
+                            Margin="5,0,0,0"
+                            Text="{Binding PasswordRepeatedErrorMessage}"
+                            TextColor="Tomato"
+                            FontSize="13"/>
+
+                    </StackLayout>
+                </StackLayout>
+
+                <Button 
+                    VerticalOptions="Center" 
+                    Text="Create Account" 
+                    Command="{Binding CreateAccountCommand}"/>
+
+                <Label 
+                    Margin="5,0,0,0"
+                    Text="{Binding ErrorMessage}"
+                    TextColor="Tomato"
+                    FontSize="13"/>
+
+            </StackLayout>
+
+            <StackLayout
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill"
+                BackgroundColor="{StaticResource FadeColor}"
+                IsVisible="{Binding IsBusy}">
+
+                <ActivityIndicator 
+                    HorizontalOptions="CenterAndExpand"
+                    VerticalOptions="CenterAndExpand"
+                    IsRunning="True"/>
+            </StackLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>
