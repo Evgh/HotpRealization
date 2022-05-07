@@ -59,7 +59,7 @@
                     Padding="0,0,0,0"/>
 
                 <Button 
-                    IsEnabled="{Binding TwoFactorEnabled}"                    
+                    IsVisible="{Binding TwoFactorEnabled}"                    
                     Margin="0,50,0,0" 
                     Text="Verify"
                     Command="{Binding SendPermissionCommand}"/>
