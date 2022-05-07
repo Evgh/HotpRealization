@@ -59,7 +59,7 @@ namespace Authorizer.ViewModels
             if (await _accountService.ChangeTwoFactorStatus(isEnabled))
                 ClearErrorMessage();
             else
-                ErrorMessage = "Something went wrong. Please, try again later.";
+                ErrorMessage = COMMON_ERROR_MESSAGE;
 
             IsBusy = false;
         }

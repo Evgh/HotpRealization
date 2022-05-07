@@ -155,7 +155,7 @@ namespace Authorizer.ViewModels
             }
             else if (!registrationResponce.IsSuccess)
             {
-                ErrorMessage = "Something went wrong. Pleace, try later";
+                ErrorMessage = COMMON_ERROR_MESSAGE;
                 return false;
             }
             else

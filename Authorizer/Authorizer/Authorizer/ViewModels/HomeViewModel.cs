@@ -58,7 +58,7 @@ namespace Authorizer.ViewModels
             }
             else
             {
-                ErrorMessage = "Sorry, something went wrong. Please, try again later.";
+                ErrorMessage = COMMON_ERROR_MESSAGE;
             }
 
             IsBusy = false;
