@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             xmlns:vm="clr-namespace:Client.ViewModels"
+             xmlns:behaviors="clr-namespace:Behaviors;assembly=Behaviors" 
+             x:Class="Client.Views.SettingsPage"
+             Title="{Binding Title}"
+             BackgroundColor="{StaticResource MyBackground}">
+
+    <ContentPage.BindingContext>
+        <vm:SettingsViewModel/>
+    </ContentPage.BindingContext>
+
+    <ContentPage.Content>
+        <Grid>
+            <StackLayout
+                Margin="30,30,30,20"
+                Spacing="10">
+
+                <Grid
+                    VerticalOptions="Start">
+
+                    <StackLayout
+                        IsVisible="{Binding IsTwoFactorAuthEnabled}"
+                        Orientation="Horizontal">
+
+                        <Label 
+                            Text="Two Factor Authentication is enabled"
+                            FontSize="18"
+                            HorizontalOptions="StartAndExpand"
+                            VerticalOptions="Start"
+                            Margin="0,5,30,0"/>
+
+                        <Button
+                            HorizontalOptions="End"
+                            VerticalOptions="Start"
+                            Text="Disable"
+                            HeightRequest="45"
+                            Command="{Binding DisableTwoFactorAuthCommand}"
+                            />
+                    </StackLayout>
+
+                    <StackLayout
+                        IsVisible="{Binding IsTwoFactorAuthEnabled, Converter={StaticResource InvertedBooleanConverter}}"
+                        Orientation="Horizontal">
+
+                        <Label 
+                            Text="Two Factor Authentication is disabled"
+                            FontSize="18"
+                            HorizontalOptions="StartAndExpand"
+                            VerticalOptions="Start"
+                            Margin="0,5,30,0"/>
+
+                        <Button
+                            HorizontalOptions="End"
+                            VerticalOptions="Start"
+                            Text="Enable"
+                            HeightRequest="45"                            
+                            Command="{Binding EnableTwoFactorAuthCommand}"
+                            />
+                    </StackLayout>
+
+                </Grid>
+
+                <Label 
+                    VerticalOptions="StartAndExpand"
+                    HorizontalOptions="Start"
+                    Margin="0,0,120,0"
+                    Text="{Binding ErrorMessage}"
+                    VerticalTextAlignment="Center"
+                    TextColor="Tomato"
+                    FontSize="13"/>
+
+                <Image 
+                    VerticalOptions="End"
+                    HorizontalOptions="End"
+                    WidthRequest="230"
+                    Source="cryptocurrency.png"/>
+            </StackLayout>
+
+            <StackLayout
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill"
+                BackgroundColor="{StaticResource FadeColor}"
+                IsVisible="{Binding IsBusy}">
+                
+                <ActivityIndicator 
+                    HorizontalOptions="CenterAndExpand"
+                    VerticalOptions="CenterAndExpand"
+                    IsRunning="True"/>
+            </StackLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>
