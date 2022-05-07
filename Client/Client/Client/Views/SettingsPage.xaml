@@ -22,11 +22,10 @@
                     VerticalOptions="Start">
 
                     <StackLayout
-                        IsVisible="{Binding IsTwoFactorAuthEnabled}"
                         Orientation="Horizontal">
 
                         <Label 
-                            Text="Two Factor Authentication is enabled"
+                            Text="{Binding Description}"
                             FontSize="18"
                             HorizontalOptions="StartAndExpand"
                             VerticalOptions="Start"
@@ -35,32 +34,11 @@
                         <Button
                             HorizontalOptions="End"
                             VerticalOptions="Start"
-                            Text="Disable"
+                            Text="{Binding ButtonTitle}"
                             HeightRequest="45"
-                            Command="{Binding DisableTwoFactorAuthCommand}"
+                            Command="{Binding EnableDisableTwoFactorAuthCommand}"
                             />
                     </StackLayout>
-
-                    <StackLayout
-                        IsVisible="{Binding IsTwoFactorAuthEnabled, Converter={StaticResource InvertedBooleanConverter}}"
-                        Orientation="Horizontal">
-
-                        <Label 
-                            Text="Two Factor Authentication is disabled"
-                            FontSize="18"
-                            HorizontalOptions="StartAndExpand"
-                            VerticalOptions="Start"
-                            Margin="0,5,30,0"/>
-
-                        <Button
-                            HorizontalOptions="End"
-                            VerticalOptions="Start"
-                            Text="Enable"
-                            HeightRequest="45"                            
-                            Command="{Binding EnableTwoFactorAuthCommand}"
-                            />
-                    </StackLayout>
-
                 </Grid>
 
                 <Label 

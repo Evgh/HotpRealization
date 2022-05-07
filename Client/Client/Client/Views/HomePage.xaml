@@ -5,24 +5,18 @@
              xmlns:vm="clr-namespace:Client.ViewModels"
              Title="{Binding Title}"
              BackgroundColor="{StaticResource MyBackground}">
-    
+
     <ContentPage.BindingContext>
         <vm:HomeViewModel />
     </ContentPage.BindingContext>
     
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <Color x:Key="Accent">#30ea5ea6</Color>
-        </ResourceDictionary>
-    </ContentPage.Resources>
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         
-        <StackLayout BackgroundColor="{StaticResource Accent}" VerticalOptions="FillAndExpand" HorizontalOptions="Fill">
+        <StackLayout BackgroundColor="{StaticResource FadeColor}" VerticalOptions="FillAndExpand" HorizontalOptions="Fill">
             <StackLayout Orientation="Horizontal" HorizontalOptions="Start" VerticalOptions="Center">
                 <ContentView Padding="15,20,15,20" VerticalOptions="FillAndExpand">
                     <Image Source="icon.png" 
@@ -39,7 +33,12 @@
                 <Label 
                     Text="{Binding WelcomeTitle}" 
                     FontSize="Title"/>
-                
+
+                <Label 
+                    Text="In this application you have access to some functionality." 
+                    FontSize="16" 
+                    Padding="0,0,0,0"/>
+
                 <Label 
                     IsVisible="{Binding TwoFactorEnabled, Converter={StaticResource InvertedBooleanConverter}}"
                     Text="Two-factor authentication is disabled. Go to Settings to enable it." 
@@ -47,22 +46,10 @@
                     Padding="0,0,0,0"/>
 
                 <Label 
-                    IsVisible="{Binding TwoFactorEnabled}"
-                    Text="Press the button to send two-factor permission to server to verify it's you who receive access to some functionality. Permissions are one-time used." 
-                    FontSize="16" 
-                    Padding="0,0,0,0"/>
-                
-                <Label 
                     IsVisible="{Binding TwoFactorEnabled}"          
-                    Text="Go to Settings to disable two-factor authentication." 
+                    Text="Two-factor authentication is enabled. Go to Settings to disable it." 
                     FontSize="16"
                     Padding="0,0,0,0"/>
-
-                <Button 
-                    IsVisible="{Binding TwoFactorEnabled}"                    
-                    Margin="0,50,0,0" 
-                    Text="Verify"
-                    Command="{Binding SendPermissionCommand}"/>
 
                 <Label 
                     Margin="5,0,0,0"

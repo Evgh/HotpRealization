@@ -9,6 +9,12 @@ namespace Client.ViewModels
 {
     public class SettingsViewModel : BaseViewModel
     {
+        private const string ENABLED_BUTTON_TITLE = "Disable";
+        private const string ENABLED_DESCRIPTION = "Two Factor Authentication is enabled";
+        private const string DISABLED_BUTTON_TITLE = "Enable";
+        private const string DISABLED_DESCRIPTION = "Two Factor Authentication is disabled";
+
+
         IAccountService _accountService;
 
         private bool _isTwoFactorAuthEnabled;
@@ -16,18 +22,25 @@ namespace Client.ViewModels
         public bool IsTwoFactorAuthEnabled
         {
             get => _isTwoFactorAuthEnabled;
-            set => SetProperty(ref _isTwoFactorAuthEnabled, value);
+            set
+            {
+                SetProperty(ref _isTwoFactorAuthEnabled, value);
+
+                OnPropertyChanged(nameof(ButtonTitle));
+                OnPropertyChanged(nameof(Description));
+            }
         }
 
-        public Command EnableTwoFactorAuthCommand { get; }
-        public Command DisableTwoFactorAuthCommand { get; }
+        public string ButtonTitle => IsTwoFactorAuthEnabled ? ENABLED_BUTTON_TITLE : DISABLED_BUTTON_TITLE;
+        public string Description => IsTwoFactorAuthEnabled ? ENABLED_DESCRIPTION : DISABLED_DESCRIPTION;
+
+        public Command EnableDisableTwoFactorAuthCommand { get; }
 
         public SettingsViewModel()
         {
             _accountService = DependencyService.Get<IAccountService>();
 
-            EnableTwoFactorAuthCommand = new Command(EnableTwoFactorAuth);
-            DisableTwoFactorAuthCommand = new Command(DisableTwoFactorAuth);
+            EnableDisableTwoFactorAuthCommand = new Command(EnableDisableTwoFactorAuth);
 
             OnAuthStatusChanged();
             ClearErrorMessage();
@@ -42,14 +55,9 @@ namespace Client.ViewModels
             Title = "Settings";            
         }
 
-        private async void EnableTwoFactorAuth()
+        private async void EnableDisableTwoFactorAuth()
         {
-            await ChangeTwoFactorStatus(true);
-        }
-
-        private async void DisableTwoFactorAuth() 
-        {
-            await ChangeTwoFactorStatus(false);
+            await ChangeTwoFactorStatus(!IsTwoFactorAuthEnabled);
         }
 
         private async Task ChangeTwoFactorStatus(bool isEnabled)
@@ -73,6 +81,8 @@ namespace Client.ViewModels
         {
             _isTwoFactorAuthEnabled = _accountService.IsTwoFactorAuthenticationEnabled;
             OnPropertyChanged(nameof(IsTwoFactorAuthEnabled));
+            OnPropertyChanged(nameof(ButtonTitle));
+            OnPropertyChanged(nameof(Description));
         }
     }
 }

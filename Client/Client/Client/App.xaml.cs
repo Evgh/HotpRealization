@@ -15,7 +15,6 @@ namespace Client
 
             DependencyService.Register<IServiceClient, Services.Implementations.ServiceClient>();
             DependencyService.Register<IAccountService, Services.Implementations.AccountService>();
-            DependencyService.Register<ITwoFactorVerificationService, Services.Implementations.TwoFactorVerificationService>();
 
             MainPage = new AppShell();
         }
