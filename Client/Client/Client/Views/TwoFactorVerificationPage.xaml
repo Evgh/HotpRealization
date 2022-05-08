@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Client.ViewModels"
+             x:Class="Client.Views.TwoFactorVerificationPage"
+             Title="{Binding Title}"
+             BackgroundColor="{StaticResource MyBackground}">
+    
+    <ContentPage.BindingContext>
+        <vm:TwoFactorVerificationViewModel/>
+    </ContentPage.BindingContext>
+    
+    <ContentPage.Content>
+        <StackLayout 
+            HorizontalOptions="Center"
+            WidthRequest="800"
+            Spacing="10"
+            Padding="30,30,30,30">
+
+            <Image 
+                Source="crypto-wallet.png"
+                WidthRequest="270"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"
+                Margin="0,30,0,30"/>
+
+            <Label 
+                Text="Please, execute two factor authentication in app Authorizer"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"
+                HorizontalTextAlignment="Center"
+                WidthRequest="600"
+                FontSize="Title"/>
+            
+            <Button 
+                Text="I sent verification request in Authorizer"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"
+                WidthRequest="270"
+                HeightRequest="50"
+                Margin="0,10,0,0"
+                Command="{Binding CheckIfVerifiedCommand}"/>
+
+            <Label 
+                Margin="5,0,0,0"
+                Text="{Binding ErrorMessage}"
+                HorizontalTextAlignment="Center"
+                TextColor="Tomato"
+                FontSize="13"
+                HorizontalOptions="Center"
+                WidthRequest="270"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

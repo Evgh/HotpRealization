@@ -105,6 +105,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="close.png" />
+    <Content Include="crypto-wallet.png" />
     <Content Include="cryptocurrency.png" />
     <Content Include="home.png" />
     <Content Include="icon.png" />

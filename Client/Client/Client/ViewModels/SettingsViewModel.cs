@@ -1,4 +1,6 @@
-﻿using Client.Services;
+﻿using Client.Models;
+using Client.Services;
+using Client.Views;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -57,17 +59,30 @@ namespace Client.ViewModels
 
         private async void EnableDisableTwoFactorAuth()
         {
-            await ChangeTwoFactorStatus(!IsTwoFactorAuthEnabled);
+            //ChangeTwoFactorStatus(!IsTwoFactorAuthEnabled);
+
+            var authParameter = new TwoFactorAuthParameter();
+            authParameter.OnAuthExecuted += ChangeTwoFactorStatus;
+            Utilities.VerificationHelper.TwoFactorParameter = authParameter;
+
+            await Shell.Current.GoToAsync($"/{nameof(TwoFactorVerificationPage)}");
         }
 
-        private async Task ChangeTwoFactorStatus(bool isEnabled)
+        private void ChangeTwoFactorStatus(bool wasVerified)
         {
             IsBusy = true;
 
-            if (await _accountService.ChangeTwoFactorStatus(isEnabled))
-                ClearErrorMessage();
+            if (wasVerified)
+            {
+                if (_accountService.ChangeTwoFactorStatus(!_accountService.IsTwoFactorAuthenticationEnabled).Result)
+                    ClearErrorMessage();
+                else
+                    ErrorMessage = COMMON_ERROR_MESSAGE;
+            }
             else
-                ErrorMessage = COMMON_ERROR_MESSAGE;
+            {
+                ErrorMessage = VERIFICATION_ERROR_MESSAGE;
+            }
 
             IsBusy = false;
         }

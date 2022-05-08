@@ -18,7 +18,8 @@
             <StackLayout 
                 Padding="45,0,45,0" 
                 VerticalOptions="StartAndExpand" 
-                Spacing="10">
+                Spacing="10"
+                WidthRequest="800">
 
                 <Image 
                     VerticalOptions="Start"
@@ -49,6 +50,7 @@
                     <Button 
                         VerticalOptions="Center" 
                         Text="Login" 
+                        WidthRequest="300"
                         Command="{Binding LoginCommand}"/>
 
                     <Button
@@ -56,6 +58,7 @@
                         Text="Create account" 
                         BackgroundColor="Transparent"
                         TextColor="Black"
+                        WidthRequest="300"
                         Command="{Binding RegistrationCommand}"/>
 
                 </StackLayout>

@@ -14,18 +14,53 @@ namespace Client.Services.Implementations
 {
     public class ServiceClient : IServiceClient
     {
-        private const string BASE_ADDRESS = "https://0d31-86-57-235-139.ngrok.io/api/";
+        private const string BASE_ADDRESS = "https://54b0-37-214-83-59.ngrok.io/api/";
 
         private readonly HttpClient _httpClient;
 
         public ServiceClient()
         {
-            _httpClient = new HttpClient();
+            _httpClient = new HttpClient(new HttpClientHandler()
+                {
+                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
+                    {
+                        //bypass
+                        return true;
+                    },
+                }
+               , false);
         }
 
         #region Public Methods
 
-        public async Task<BaseResponce<User>> RegisterUser(string login, string password)
+        public async Task<BaseResponce<bool?>> GetIsTwoFactorConfirmed(string login)
+        {
+            try
+            {
+                var serverResponce = await _httpClient.GetAsync(BASE_ADDRESS + $"TwoFactorAuthentication/IsTwoFactorConfirmed?login={login}");
+
+                var responce = new BaseResponce<bool?>()
+                {
+                    IsSuccess = serverResponce.IsSuccessStatusCode,
+                    StatusCode = serverResponce.StatusCode,
+                    ErrorMessage = serverResponce.ReasonPhrase
+                };
+
+                if (serverResponce.IsSuccessStatusCode 
+                   && !serverResponce.StatusCode.Equals(HttpStatusCode.NoContent))
+                {
+                    responce.Content = bool.Parse(await serverResponce.Content.ReadAsStringAsync());   
+                }
+
+                return responce;
+            }
+            catch (Exception ex)
+            {
+                return CreateErrorBoolResponce();
+            }
+        }
+
+        public async Task<BaseResponce<User>> PostRegisterUser(string login, string password)
         {
             try
             {
@@ -40,11 +75,11 @@ namespace Client.Services.Implementations
             }
             catch (Exception ex)
             {
-                return CreateErrorResponce();
+                return CreateErrorUserResponce();
             }
         }
 
-        public async Task<BaseResponce<User>> AuthenticateUserByPassword(string login, string password)
+        public async Task<BaseResponce<User>> PostAuthenticateUserByPassword(string login, string password)
         {
             try
             {
@@ -59,12 +94,12 @@ namespace Client.Services.Implementations
             }
             catch(Exception ex)
             {
-                return CreateErrorResponce();
+                return CreateErrorUserResponce();
             }
 
         }
 
-        public async Task<BaseResponce<User>> ChangeTwoFactorStatus(string login, string keyBase64, bool isEnabled)
+        public async Task<BaseResponce<User>> PostChangeTwoFactorStatus(string login, string keyBase64, bool isEnabled)
         {
             try
             {
@@ -80,11 +115,11 @@ namespace Client.Services.Implementations
             }
             catch (Exception e)
             {
-                return CreateErrorResponce();
+                return CreateErrorUserResponce();
             }
         }
 
-        public async Task<bool> ConfirmTwoFactorAuth(string login, string code)
+        public async Task<bool> PostConfirmTwoFactorAuth(string login, string code)
         {
             try
             {
@@ -137,7 +172,7 @@ namespace Client.Services.Implementations
             return userResponce;
         }
 
-        private BaseResponce<User> CreateErrorResponce()
+        private BaseResponce<User> CreateErrorUserResponce()
         {
             return new BaseResponce<User>
             {
@@ -148,6 +183,16 @@ namespace Client.Services.Implementations
             };
         }
 
+        private BaseResponce<bool?> CreateErrorBoolResponce()
+        {
+            return new BaseResponce<bool?>
+            {
+                IsSuccess = false,
+                StatusCode = HttpStatusCode.BadRequest,
+                ErrorMessage = "Something went wrong",
+                Content = null
+            };
+        }
         #endregion
     }
 }

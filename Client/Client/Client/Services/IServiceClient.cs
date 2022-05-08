@@ -9,9 +9,11 @@ namespace Client.Services
 {
     public interface IServiceClient
     {
-        Task<BaseResponce<User>> RegisterUser(string login, string password);
-        Task<BaseResponce<User>> AuthenticateUserByPassword(string login, string password);
-        Task<BaseResponce<User>> ChangeTwoFactorStatus(string login, string keyBase64, bool isEnabled);
-        Task<bool> ConfirmTwoFactorAuth(string login, string code);
+        Task<BaseResponce<bool?>> GetIsTwoFactorConfirmed(string login);
+
+        Task<BaseResponce<User>> PostRegisterUser(string login, string password);
+        Task<BaseResponce<User>> PostAuthenticateUserByPassword(string login, string password);
+        Task<BaseResponce<User>> PostChangeTwoFactorStatus(string login, string keyBase64, bool isEnabled);
+        Task<bool> PostConfirmTwoFactorAuth(string login, string code);
     }
 }

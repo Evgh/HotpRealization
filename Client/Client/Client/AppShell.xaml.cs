@@ -11,6 +11,8 @@ namespace Client
         public AppShell()
         {
             InitializeComponent();
+
+            Routing.RegisterRoute(nameof(TwoFactorVerificationPage), typeof(TwoFactorVerificationPage));
         }
 
         private async void OnMenuItemClicked(object sender, EventArgs e)

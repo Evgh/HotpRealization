@@ -53,7 +53,7 @@ namespace Client.Services.Implementations
 
         public async Task<BaseResponce<User>> RegisterUser(string login, string password)
         {
-            BaseResponce<User> registrationResponce = await _serviceClient.RegisterUser(login, password);
+            BaseResponce<User> registrationResponce = await _serviceClient.PostRegisterUser(login, password);
 
             if (registrationResponce.Content != null)
                 ExecuteLogin(registrationResponce.Content);
@@ -63,7 +63,7 @@ namespace Client.Services.Implementations
 
         public async Task<BaseResponce<User>> AuthenticateUserByPassword(string login, string password)
         {
-            BaseResponce<User> authResponce = await _serviceClient.AuthenticateUserByPassword(login, password);
+            BaseResponce<User> authResponce = await _serviceClient.PostAuthenticateUserByPassword(login, password);
 
             if (authResponce.Content != null)
                 ExecuteLogin(authResponce.Content);
@@ -82,10 +82,21 @@ namespace Client.Services.Implementations
 
         public async Task<bool> ChangeTwoFactorStatus(bool isEnabled)
         {
-            // call if auth enabled
+            string code = string.Empty;
 
-            IsTwoFactorAuthenticationEnabled = UserSettings.IsTwoFactorAuthenticationEnabled = isEnabled;
-            return true;
+            var changeStatusResponce = await _serviceClient.PostChangeTwoFactorStatus(Login, "", isEnabled);
+
+            if (changeStatusResponce.StatusCode.Equals(HttpStatusCode.NoContent) ||
+                !changeStatusResponce.IsSuccess)
+            {
+                return false;
+            }
+            else
+            {
+                var userUpdated = changeStatusResponce.Content;
+                IsTwoFactorAuthenticationEnabled = UserSettings.IsTwoFactorAuthenticationEnabled = userUpdated.IsTwoFactorAuthenticationEnabled;
+                return true;
+            }
         }
 
         #endregion

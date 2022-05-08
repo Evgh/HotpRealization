@@ -11,6 +11,7 @@ namespace Client.ViewModels
     public class BaseViewModel : INotifyPropertyChanged
     {
         protected const string COMMON_ERROR_MESSAGE = "Sorry, something went wrong. Please, try again later";
+        protected const string VERIFICATION_ERROR_MESSAGE = "Two factor verification wasn't provided";
 
         private string _title = string.Empty;
         private bool _isBusy = false;

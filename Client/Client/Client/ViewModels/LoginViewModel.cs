@@ -53,9 +53,23 @@ namespace Client.ViewModels
                 if (ValidateLoginResponce(loginResponce))
                 {
                     ClearFields();
-                    await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
+
+                    var authParameter = new TwoFactorAuthParameter();
+                    authParameter.OnAuthExecuted += TwoFactorAuthCallback;
+                    Utilities.VerificationHelper.TwoFactorParameter = authParameter;
+
+                    await Shell.Current.GoToAsync($"/{nameof(TwoFactorVerificationPage)}");
                 }
             }
+        }
+
+        private void TwoFactorAuthCallback(bool isVerified)
+        {
+            if (isVerified)
+                Shell.Current.GoToAsync($"//{nameof(HomePage)}").GetAwaiter();
+
+            else
+                _accountService.Logout();
         }
 
         private async void ExecuteRegistration()

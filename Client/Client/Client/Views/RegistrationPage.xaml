@@ -22,7 +22,8 @@
 
                 <StackLayout
                     VerticalOptions="Start"
-                    Margin="0,0,0,30">
+                    Margin="0,0,0,30"
+                    WidthRequest="800">
 
                     <StackLayout
                         VerticalOptions="Start">
@@ -77,6 +78,7 @@
                 <Button 
                     VerticalOptions="Center" 
                     Text="Create Account" 
+                    WidthRequest="300"
                     Command="{Binding CreateAccountCommand}"/>
 
                 <Label 
