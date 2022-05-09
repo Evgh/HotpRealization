@@ -27,7 +27,7 @@ namespace Client.ViewModels
 
             if(Utilities.VerificationHelper.TwoFactorParameter == null || string.IsNullOrEmpty(Login))
             {
-                OnBackButtonPresed();
+                await OnBackButtonPresed();
                 return;
             }
 

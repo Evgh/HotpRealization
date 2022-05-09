@@ -1,5 +1,6 @@
 ﻿using Client.Models.Responces;
 using Client.Services;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace Client.ViewModels
@@ -20,17 +21,36 @@ namespace Client.ViewModels
             CheckIfChangedCommand = new Command(CheckIfChanged);
         }
 
-        private async void CheckIfChanged()
+        protected async override Task OnBackButtonPresed()
         {
             IsBusy = true;
+            BaseResponce<bool?> responce = await _serviceClient.GetIsTwoFactorEnabled(_accountService.Login);
+            IsBusy = false;
 
-            if(Utilities.VerificationHelper.TwoFactorParameter == null)
+            if (responce.IsSuccess && responce.Content.HasValue)
             {
-                OnBackButtonPresed();
+                if (_accountService.IsTwoFactorAuthenticationEnabled ^ responce.Content.Value)
+                {
+                    _accountService.IsTwoFactorAuthenticationEnabled = responce.Content.Value;
+                }
+
+            }
+
+            await base.OnBackButtonPresed();
+        }
+
+        private async void CheckIfChanged()
+        {
+
+            if (Utilities.VerificationHelper.TwoFactorParameter == null)
+            {
+                await OnBackButtonPresed();
                 return;
             }
 
+            IsBusy = true;
             BaseResponce<bool?> responce = await _serviceClient.GetIsTwoFactorEnabled(_accountService.Login);
+            IsBusy = false;
 
             if (!responce.IsSuccess
                || !responce.Content.HasValue)
@@ -45,13 +65,10 @@ namespace Client.ViewModels
             else
             {
                 ErrorMessage = string.Empty;
-                OnBackButtonPresed();
+                await OnBackButtonPresed();
 
                 Utilities.VerificationHelper.TwoFactorParameter?.SetIfAuthSucceessful(true);
-                Utilities.VerificationHelper.TwoFactorParameter = null;                
             }
-
-            IsBusy = false;
         }
     }
 }

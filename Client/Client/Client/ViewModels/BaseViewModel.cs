@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace Client.ViewModels
@@ -45,7 +46,7 @@ namespace Client.ViewModels
         public BaseViewModel()
         {
             _accountService = DependencyService.Get<IAccountService>();
-            GoBackCommand = new Command(OnBackButtonPresed);
+            GoBackCommand = new Command(async () => await OnBackButtonPresed());
 
             _accountService.OnDataChanged += OnAccountDataChanged;
             _accountService.OnDataChanged += ClearErrorMessage;
@@ -54,13 +55,13 @@ namespace Client.ViewModels
             ClearErrorMessage();
         }
 
-        protected virtual void OnBackButtonPresed()
+        protected async virtual Task OnBackButtonPresed()
         {
             if (!string.IsNullOrEmpty(PreviousPage))
             {
                 try
                 {
-                    Shell.Current.GoToAsync($"//{PreviousPage}");
+                    await Shell.Current.GoToAsync($"//{PreviousPage}");
                 }
                 catch (Exception ex)
                 {

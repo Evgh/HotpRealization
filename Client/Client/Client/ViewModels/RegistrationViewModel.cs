@@ -96,12 +96,6 @@ namespace Client.ViewModels
             }
         }
 
-        //private async void ExecuteGoBack()
-        //{
-        //    ClearFields();
-        //    await Shell.Current.GoToAsync($"//{nameof(LoginPage)}");
-        //}
-
         private void ClearFields()
         {
             Login = string.Empty;
