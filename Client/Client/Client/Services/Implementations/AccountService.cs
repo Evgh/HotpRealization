@@ -38,6 +38,8 @@ namespace Client.Services.Implementations
         }
         
         public event Action OnDataChanged;
+        public event Action OnLogin;
+        public event Action OnLogout;
 
         public AccountService()
         {
@@ -64,6 +66,8 @@ namespace Client.Services.Implementations
             UserSettings.Id = user.Id;
             Login = UserSettings.Login = user.Login;
             IsTwoFactorAuthenticationEnabled = UserSettings.IsTwoFactorAuthenticationEnabled = user.IsTwoFactorAuthenticationEnabled;
+
+            OnLogin?.Invoke();
         }
 
         public void ExecuteLogout()
@@ -71,6 +75,8 @@ namespace Client.Services.Implementations
             UserSettings.Id = 0;
             Login = UserSettings.Login = string.Empty;
             IsTwoFactorAuthenticationEnabled = UserSettings.IsTwoFactorAuthenticationEnabled = false;
+
+            OnLogout?.Invoke();
         }
 
         public void ChangeTwoFactorStatus(bool isEnabled)

@@ -21,16 +21,16 @@ namespace Client.Services.Implementations
         public ServiceClient()
         {
             _httpClient = new HttpClient
-            //();
-            (new HttpClientHandler()
-            {
-                ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
-                {
-                    //bypass
-                    return true;
-                },
-            }
-               , false);
+            ();
+            //(new HttpClientHandler()
+            //{
+            //    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
+            //    {
+            //        //bypass
+            //        return true;
+            //    },
+            //}
+            //   , false);
         }
 
         #region Public Methods

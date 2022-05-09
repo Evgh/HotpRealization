@@ -15,8 +15,10 @@ namespace Client
 
             DependencyService.Register<IServiceClient, Services.Implementations.ServiceClient>();
             DependencyService.RegisterSingleton<IAccountService>(new Services.Implementations.AccountService());
+            DependencyService.RegisterSingleton<IPullingService>(new Services.Implementations.PullingService());
 
             MainPage = new AppShell();
+            RegisterPullingService();
         }
 
         protected override void OnStart()
@@ -29,6 +31,14 @@ namespace Client
 
         protected override void OnResume()
         {
+        }
+
+        protected void RegisterPullingService()
+        {
+            var pullingService = DependencyService.Get<IPullingService>();
+            var accountService = DependencyService.Get<IAccountService>();
+            accountService.OnLogin += pullingService.StartPulling;
+            accountService.OnLogout += pullingService.StopPulling;
         }
     }
 }

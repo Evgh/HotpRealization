@@ -40,6 +40,7 @@ namespace Client.ViewModels
             authParameter.OnAuthExecuted += ChangeTwoFactorStatus;
             Utilities.VerificationHelper.TwoFactorParameter = authParameter;
 
+            DependencyService.Get<IPullingService>().StopPulling();
             await Shell.Current.GoToAsync($"//{nameof(TwoFactorConfirmChangesPage)}?{nameof(PreviousPage)}={nameof(SettingsPage)}");
         }
 

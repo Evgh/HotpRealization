@@ -37,6 +37,7 @@ namespace Client.ViewModels
             }
 
             await base.OnBackButtonPresed();
+            DependencyService.Get<IPullingService>().StartPulling();
         }
 
         private async void CheckIfChanged()
