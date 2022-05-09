@@ -49,7 +49,6 @@ namespace Client.ViewModels
 
             if (wasVerified)
             {
-                _accountService.ChangeTwoFactorStatus(!_accountService.IsTwoFactorAuthenticationEnabled);
                 ClearErrorMessage();
             }
             else

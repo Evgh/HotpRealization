@@ -10,8 +10,6 @@ namespace Client.Services
     public interface IAccountService
     {
         event Action OnDataChanged;
-        event Action OnLogin;
-        event Action OnLogout;
 
         string Login { get; set; }
         bool IsTwoFactorAuthenticationEnabled { get; set; }
