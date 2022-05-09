@@ -55,7 +55,7 @@ namespace Authorizer.Services.Implementations
 
         public async Task<BaseResponce<User>> RegisterUser(string login, string password)
         {
-            BaseResponce<User> registrationResponce = await _serviceClient.RegisterUser(login, password);
+            BaseResponce<User> registrationResponce = await _serviceClient.PostRegisterUser(login, password);
 
             if (registrationResponce.Content != null)
                 ExecuteLogin(registrationResponce.Content);
@@ -65,7 +65,7 @@ namespace Authorizer.Services.Implementations
 
         public async Task<BaseResponce<User>> AuthenticateUserByPassword(string login, string password)
         {
-            BaseResponce<User> authResponce = await _serviceClient.AuthenticateUserByPassword(login, password);
+            BaseResponce<User> authResponce = await _serviceClient.PostAuthenticateUserByPassword(login, password);
 
             if (authResponce.Content != null)
                 ExecuteLogin(authResponce.Content);
@@ -90,7 +90,7 @@ namespace Authorizer.Services.Implementations
                 code = _twoFactorService.InitializeTwoFactorAuth(Login);
             }
 
-            var changeStatusResponce = await _serviceClient.ChangeTwoFactorStatus(Login, code, isEnabled);
+            var changeStatusResponce = await _serviceClient.PostChangeTwoFactorStatus(Login, code, isEnabled);
 
             if (changeStatusResponce.StatusCode.Equals(HttpStatusCode.NoContent) ||
                 !changeStatusResponce.IsSuccess)

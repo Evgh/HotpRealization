@@ -52,9 +52,10 @@ namespace Authorizer.ViewModels
             IsBusy = true;
             var hotpCode = _twoFactorService.GenerareCode(_accountService.Login);
 
-            if (await _serviceClient.ConfirmTwoFactorAuth(_accountService.Login, hotpCode))
+            if (await _serviceClient.PostConfirmTwoFactorAuth(_accountService.Login, hotpCode))
             {
                 ErrorMessage = string.Empty;
+                await Shell.Current.DisplayAlert("Verification sended", "Verification was sended to server. Please, notice, that verification is one-time used. You should send confirmation every time it will requested in Client app", "OK");
             }
             else
             {

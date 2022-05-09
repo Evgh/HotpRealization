@@ -14,7 +14,7 @@ namespace Authorizer.Services.Implementations
 {
     public class ServiceClient : IServiceClient
     {
-        private const string BASE_ADDRESS = "https://0d31-86-57-235-139.ngrok.io/api/";
+        private const string BASE_ADDRESS = "https://42b7-37-214-57-105.ngrok.io/api/";
 
         private readonly HttpClient _httpClient;
 
@@ -25,7 +25,7 @@ namespace Authorizer.Services.Implementations
 
         #region Public Methods
 
-        public async Task<BaseResponce<User>> RegisterUser(string login, string password)
+        public async Task<BaseResponce<User>> PostRegisterUser(string login, string password)
         {
             try
             {
@@ -44,7 +44,7 @@ namespace Authorizer.Services.Implementations
             }
         }
 
-        public async Task<BaseResponce<User>> AuthenticateUserByPassword(string login, string password)
+        public async Task<BaseResponce<User>> PostAuthenticateUserByPassword(string login, string password)
         {
             try
             {
@@ -64,7 +64,7 @@ namespace Authorizer.Services.Implementations
 
         }
 
-        public async Task<BaseResponce<User>> ChangeTwoFactorStatus(string login, string keyBase64, bool isEnabled)
+        public async Task<BaseResponce<User>> PostChangeTwoFactorStatus(string login, string keyBase64, bool isEnabled)
         {
             try
             {
@@ -84,7 +84,7 @@ namespace Authorizer.Services.Implementations
             }
         }
 
-        public async Task<bool> ConfirmTwoFactorAuth(string login, string code)
+        public async Task<bool> PostConfirmTwoFactorAuth(string login, string code)
         {
             try
             {
