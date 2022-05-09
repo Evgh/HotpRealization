@@ -10,7 +10,7 @@ namespace Client.ViewModels
     {
         private readonly IServiceClient _serviceClient;
 
-        public bool IsTwoFactorEnabled => _accountService.IsTwoFactorAuthenticationEnabled;
+        public string Description => _accountService.IsTwoFactorAuthenticationEnabled ? "Please, disable two factor authentication in app Authorizer" : "Please, enable two factor authentication in app Authorizer";
 
         public Command CheckIfChangedCommand { get; }
 
@@ -19,6 +19,13 @@ namespace Client.ViewModels
             _serviceClient = DependencyService.Get<IServiceClient>();
 
             CheckIfChangedCommand = new Command(CheckIfChanged);
+        }
+
+        protected override void OnAccountDataChanged()
+        {
+            base.OnAccountDataChanged();
+
+            OnPropertyChanged(nameof(Description));
         }
 
         protected async override Task OnBackButtonPresed()

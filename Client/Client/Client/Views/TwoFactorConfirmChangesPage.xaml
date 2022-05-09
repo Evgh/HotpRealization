@@ -31,17 +31,7 @@
                     Margin="0,30,0,30"/>
 
                 <Label 
-                    IsVisible="{Binding IsTwoFactorEnabled}"
-                    Text="Please, disable two factor authentication in app Authorizer"
-                    VerticalOptions="Center"
-                    HorizontalOptions="Center"
-                    HorizontalTextAlignment="Center"
-                    WidthRequest="600"
-                    FontSize="Title"/>
-
-                <Label 
-                    IsVisible="{Binding IsTwoFactorEnabled, Converter={StaticResource InvertedBooleanConverter}}"
-                    Text="Please, enable two factor authentication in app Authorizer"
+                    Text="{Binding Description}"
                     VerticalOptions="Center"
                     HorizontalOptions="Center"
                     HorizontalTextAlignment="Center"
