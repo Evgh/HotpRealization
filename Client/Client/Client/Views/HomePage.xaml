@@ -1,21 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Client.Views.HomePage"
              xmlns:vm="clr-namespace:Client.ViewModels"
+             xmlns:elements="clr-namespace:Client.Views.Elements"
+             x:Class="Client.Views.HomePage" 
              Title="{Binding Title}"
              BackgroundColor="{StaticResource MyBackground}">
 
     <ContentPage.BindingContext>
         <vm:HomeViewModel />
     </ContentPage.BindingContext>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        
+
         <StackLayout BackgroundColor="{StaticResource FadeColor}" VerticalOptions="FillAndExpand" HorizontalOptions="Fill">
             <StackLayout Orientation="Horizontal" HorizontalOptions="Start" VerticalOptions="Center">
                 <ContentView Padding="15,20,15,20" VerticalOptions="FillAndExpand">
@@ -26,8 +27,7 @@
                 </ContentView>
             </StackLayout>
         </StackLayout>
-        
-        
+
         <ScrollView Grid.Row="1">
             <StackLayout Orientation="Vertical" Padding="30,40,30,24" Spacing="10">
                 <Label 
@@ -35,20 +35,13 @@
                     FontSize="Title"/>
 
                 <Label 
-                    Text="In this application you have access to some functionality." 
+                    Text="In this application you have access to some functionality. You can protect your data using two factor authentication." 
                     FontSize="16" 
                     Padding="0,0,0,0"/>
 
                 <Label 
-                    IsVisible="{Binding TwoFactorEnabled, Converter={StaticResource InvertedBooleanConverter}}"
-                    Text="Two-factor authentication is disabled. Go to Settings to enable it." 
+                    Text="{Binding Description}" 
                     FontSize="16" 
-                    Padding="0,0,0,0"/>
-
-                <Label 
-                    IsVisible="{Binding TwoFactorEnabled}"          
-                    Text="Two-factor authentication is enabled. Go to Settings to disable it." 
-                    FontSize="16"
                     Padding="0,0,0,0"/>
 
                 <Label 
@@ -59,18 +52,8 @@
             </StackLayout>
         </ScrollView>
 
-        <StackLayout
-                Grid.RowSpan="2"
-                HorizontalOptions="Fill"
-                VerticalOptions="Fill"
-                BackgroundColor="{StaticResource FadeColor}"
-                IsVisible="{Binding IsBusy}">
-
-            <ActivityIndicator 
-                    HorizontalOptions="CenterAndExpand"
-                    VerticalOptions="CenterAndExpand"
-                    IsRunning="True"/>
-        </StackLayout>
+        <elements:LoadingLayout 
+            Grid.RowSpan="2" 
+            IsVisible="{Binding IsBusy}"/>
     </Grid>
-
 </ContentPage>

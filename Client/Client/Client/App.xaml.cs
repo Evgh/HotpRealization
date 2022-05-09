@@ -14,7 +14,7 @@ namespace Client
             InitializeComponent();
 
             DependencyService.Register<IServiceClient, Services.Implementations.ServiceClient>();
-            DependencyService.Register<IAccountService, Services.Implementations.AccountService>();
+            DependencyService.RegisterSingleton<IAccountService>(new Services.Implementations.AccountService());
 
             MainPage = new AppShell();
         }

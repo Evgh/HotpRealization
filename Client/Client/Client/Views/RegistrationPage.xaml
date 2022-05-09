@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Client.ViewModels"
+             xmlns:elements="clr-namespace:Client.Views.Elements"
              x:Class="Client.Views.RegistrationPage"
              BackgroundColor="{StaticResource MyBackground}">
     
@@ -18,26 +19,28 @@
             <StackLayout 
                 VerticalOptions="Start"
                 Padding="45,150,45,50" 
-                Spacing="15">
+                Spacing="15"
+                HorizontalOptions="Center"
+                WidthRequest="400">
 
                 <StackLayout
                     VerticalOptions="Start"
                     Margin="0,0,0,30"
-                    WidthRequest="800">
+                    Spacing="10">
 
                     <StackLayout
                         VerticalOptions="Start">
 
                         <Entry 
-                        Placeholder="Login"
-                        Text="{Binding Login}"
-                        ClearButtonVisibility="WhileEditing"/>
-                        <Label 
-                        Margin="5,0,0,0"
-                        Text="{Binding LoginErrorMessage}"
-                        TextColor="Tomato"
-                        FontSize="13"/>
+                            Placeholder="Login"
+                            Text="{Binding Login}"
+                            ClearButtonVisibility="WhileEditing"/>
 
+                        <Label 
+                            Margin="5,0,0,0"
+                            Text="{Binding LoginErrorMessage}"
+                            TextColor="Tomato"
+                            FontSize="13"/>
                     </StackLayout>
 
                     <StackLayout
@@ -48,13 +51,12 @@
                             Text="{Binding Password}"
                             IsPassword="True"
                             ClearButtonVisibility="WhileEditing"/>
-                        
+
                         <Label 
                             Margin="5,0,0,0"
                             Text="{Binding PasswordErrorMessage}"
                             TextColor="Tomato"
                             FontSize="13"/>
-
                     </StackLayout>
 
                     <StackLayout
@@ -89,17 +91,7 @@
 
             </StackLayout>
 
-            <StackLayout
-                HorizontalOptions="Fill"
-                VerticalOptions="Fill"
-                BackgroundColor="{StaticResource FadeColor}"
-                IsVisible="{Binding IsBusy}">
-
-                <ActivityIndicator 
-                    HorizontalOptions="CenterAndExpand"
-                    VerticalOptions="CenterAndExpand"
-                    IsRunning="True"/>
-            </StackLayout>
+            <elements:LoadingLayout IsVisible="{Binding IsBusy}"/>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

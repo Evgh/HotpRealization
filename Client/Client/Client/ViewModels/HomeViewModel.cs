@@ -1,42 +1,26 @@
-﻿using Client.Services;
-using System;
-using System.Windows.Input;
-using Xamarin.Essentials;
-using Xamarin.Forms;
-
-namespace Client.ViewModels
+﻿namespace Client.ViewModels
 {
     public class HomeViewModel : BaseViewModel
     {
-        private readonly IAccountService _accountService;
-        private readonly IServiceClient _serviceClient;
+        public string WelcomeTitle => $"Hello, {_accountService.Login}!";
 
-        public string WelcomeTitle
-        {
-            get => $"Hello, {_accountService.Login}!";
-        }
-
-        public bool TwoFactorEnabled
-        {
-            get => _accountService.IsTwoFactorAuthenticationEnabled;
-        }
+        public string Description => _accountService.IsTwoFactorAuthenticationEnabled ?
+                                        "Two-factor authentication is enabled. Go to Settings to disable it." :
+                                        "Two-factor authentication is disabled. Go to Settings to enable it.";
 
         public HomeViewModel()
         {
-            _accountService = DependencyService.Get<IAccountService>();
-            _serviceClient = DependencyService.Get<IServiceClient>();
-
             Title = "Home";
 
-            OnUserDataChanged();
-            _accountService.OnDataChanged += OnUserDataChanged;
-            _accountService.OnDataChanged += () => ErrorMessage = string.Empty;
+            OnAccountDataChanged();
         }
 
-        private void OnUserDataChanged()
+        protected override void OnAccountDataChanged()
         {
+            base.OnAccountDataChanged();
+
             OnPropertyChanged(nameof(WelcomeTitle));
-            OnPropertyChanged(nameof(TwoFactorEnabled));
+            OnPropertyChanged(nameof(Description));
         }
     }
 }

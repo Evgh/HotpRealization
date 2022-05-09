@@ -4,6 +4,7 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Client.ViewModels"
+             xmlns:elements="clr-namespace:Client.Views.Elements"
              mc:Ignorable="d"
              x:Class="Client.Views.LoginPage"
              Shell.NavBarIsVisible="False"
@@ -18,8 +19,9 @@
             <StackLayout 
                 Padding="45,0,45,0" 
                 VerticalOptions="StartAndExpand" 
-                Spacing="10"
-                WidthRequest="800">
+                HorizontalOptions="Center"
+                WidthRequest="400"
+                Spacing="10">
 
                 <Image 
                     VerticalOptions="Start"
@@ -27,7 +29,10 @@
                     Source="icon.png"/>
 
                 <StackLayout VerticalOptions="Center">
-                    <StackLayout Margin="0,0,0,20">
+                    
+                    <StackLayout 
+                        Margin="0,0,0,20">
+                        
                         <Entry 
                             Placeholder="Login"
                             Text="{Binding Login}"
@@ -49,34 +54,21 @@
 
                     <Button 
                         VerticalOptions="Center" 
-                        Text="Login" 
-                        WidthRequest="300"
+                        Text="Login"
                         Command="{Binding LoginCommand}"/>
 
                     <Button
                         VerticalOptions="Center" 
                         Text="Create account" 
                         BackgroundColor="Transparent"
-                        TextColor="Black"
-                        WidthRequest="300"
+                        TextColor="{StaticResource Primary}"
                         Command="{Binding RegistrationCommand}"/>
 
                 </StackLayout>
 
             </StackLayout>
 
-
-            <StackLayout
-                HorizontalOptions="Fill"
-                VerticalOptions="Fill"
-                BackgroundColor="{StaticResource FadeColor}"
-                IsVisible="{Binding IsBusy}">
-
-                <ActivityIndicator 
-                    HorizontalOptions="CenterAndExpand"
-                    VerticalOptions="CenterAndExpand"
-                    IsRunning="True"/>
-            </StackLayout>
+            <elements:LoadingLayout IsVisible="{Binding IsBusy}"/>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

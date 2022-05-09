@@ -2,10 +2,7 @@
 using Client.Models.Responces;
 using Client.Services;
 using Client.Views;
-using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -13,7 +10,6 @@ namespace Client.ViewModels
 {
     public class LoginViewModel : BaseViewModel
     {
-        private readonly IAccountService _accountService;
         private readonly IServiceClient _serviceClient;
 
         private string _login;
@@ -35,14 +31,16 @@ namespace Client.ViewModels
 
         public LoginViewModel()
         {
-            _accountService = DependencyService.Get<IAccountService>();
             _serviceClient = DependencyService.Get<IServiceClient>();
 
             LoginCommand = new Command(ExecuteLogin);
             RegistrationCommand = new Command(ExecuteRegistration);
+        }
 
-            this.PropertyChanged +=
-                (_, __) => LoginCommand.ChangeCanExecute();
+        protected override void OnAccountDataChanged()
+        {
+            base.OnAccountDataChanged();
+            ClearFields();
         }
 
         private async void ExecuteLogin()
@@ -64,7 +62,7 @@ namespace Client.ViewModels
 
                         Utilities.VerificationHelper.TwoFactorParameter = authParameter;
 
-                        await Shell.Current.GoToAsync($"/{nameof(TwoFactorVerificationPage)}?{nameof(TwoFactorVerificationViewModel.Login)}={loginResponce.Content.Login}");
+                        await Shell.Current.GoToAsync($"//{nameof(TwoFactorVerificationPage)}?{nameof(TwoFactorVerificationViewModel.Login)}={loginResponce.Content.Login}&{nameof(PreviousPage)}={nameof(LoginPage)}");
                     }
                     else
                     {
@@ -94,14 +92,15 @@ namespace Client.ViewModels
         {
             _accountService.ExecuteLogin(user);
 
-            await Shell.Current.GoToAsync($"..");
             await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
         }
 
+
         private async void ExecuteRegistration()
         {
-            await Shell.Current.GoToAsync($"//{nameof(RegistrationPage)}");
+            await Shell.Current.GoToAsync($"//{nameof(RegistrationPage)}?{nameof(PreviousPage)}={nameof(LoginPage)}");
         }
+
 
         private bool ValidateForLogin()
         {
@@ -111,14 +110,6 @@ namespace Client.ViewModels
             ErrorMessage = !isValid ? "Login and password could not be empty" : string.Empty;
 
             return isValid;
-        }
-
-        private void ClearFields()
-        {
-            Login = string.Empty;
-            Password = string.Empty;
-
-            ErrorMessage = string.Empty;
         }
 
         private bool ValidateLoginResponce(BaseResponce<User> registrationResponce)
@@ -138,6 +129,14 @@ namespace Client.ViewModels
                 ErrorMessage = string.Empty;
                 return true;
             }
+        }
+
+        private void ClearFields()
+        {
+            Login = string.Empty;
+            Password = string.Empty;
+
+            ErrorMessage = string.Empty;
         }
     }
 }

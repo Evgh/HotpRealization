@@ -1,19 +1,15 @@
 ﻿using Client.Models;
 using Client.Models.Responces;
-using Client.Services;
 using Client.Views;
-using System.Collections.Generic;
 using System.Net;
-using System.Text;
 using Xamarin.Forms;
 
 namespace Client.ViewModels
-{
+{ 
+    [QueryProperty(nameof(PreviousPage), nameof(PreviousPage))]
     public class RegistrationViewModel : BaseViewModel
     {
-        private const int MIN_PASSWORD_LENGTH = 1;
-
-        IAccountService _accountService;
+        private const int MIN_PASSWORD_LENGTH = 6;
 
         private string _login;
         private string _password;
@@ -29,7 +25,6 @@ namespace Client.ViewModels
             {
                 SetProperty(ref _login, value);
                 ValidateLogin();
-                CreateAccountCommand.ChangeCanExecute();
             }
         }
         public string Password
@@ -40,7 +35,6 @@ namespace Client.ViewModels
                 SetProperty(ref _password, value);
                 ValidatePassword();
                 ValidatePasswordRepeated();
-                CreateAccountCommand.ChangeCanExecute();
             }
         }
 
@@ -51,7 +45,6 @@ namespace Client.ViewModels
             {
                 SetProperty(ref _passwordRepeated, value);
                 ValidatePasswordRepeated();
-                CreateAccountCommand.ChangeCanExecute();
             }
         }
 
@@ -74,14 +67,17 @@ namespace Client.ViewModels
         }
 
         public Command CreateAccountCommand { get; }
-        public Command GoBackCommand { get; }
 
         public RegistrationViewModel()
         {
-            _accountService = DependencyService.Get<IAccountService>();
-
             CreateAccountCommand = new Command(ExecuteCreateAccount);
-            GoBackCommand = new Command(ExecuteGoBack);
+        }
+
+        protected override void OnAccountDataChanged()
+        {
+            base.OnAccountDataChanged();
+
+            ClearFields();
         }
 
         private async void ExecuteCreateAccount()
@@ -99,11 +95,12 @@ namespace Client.ViewModels
                 }
             }
         }
-        private async void ExecuteGoBack()
-        {
-            ClearFields();
-            await Shell.Current.GoToAsync($"//{nameof(LoginPage)}");
-        }
+
+        //private async void ExecuteGoBack()
+        //{
+        //    ClearFields();
+        //    await Shell.Current.GoToAsync($"//{nameof(LoginPage)}");
+        //}
 
         private void ClearFields()
         {
@@ -141,7 +138,7 @@ namespace Client.ViewModels
         private bool ValidatePasswordRepeated()
         {
             bool valid = string.Compare(Password, PasswordRepeated).Equals(0);
-            PasswordRepeatedErrorMessage = !valid ? $"Passwords are different" : string.Empty;
+            PasswordRepeatedErrorMessage = !valid ? $"Passwords aren't match" : string.Empty;
 
             return valid;
         }

@@ -1,5 +1,4 @@
-﻿using Client.Models;
-using Client.Services;
+﻿using Client.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,16 +16,20 @@ namespace Client.ViewModels
         private bool _isBusy = false;
         private string _errorMessage;
 
+        protected readonly IAccountService _accountService;
+
+        public string PreviousPage { get; set; }
+
         public bool IsBusy
         {
-            get { return _isBusy; }
-            set { SetProperty(ref _isBusy, value); }
+            get => _isBusy;
+            set => SetProperty(ref _isBusy, value);
         }
 
         public string Title
         {
-            get { return _title; }
-            set { SetProperty(ref _title, value); }
+            get => _title;
+            set => SetProperty(ref _title, value);
         }
 
         public string ErrorMessage
@@ -35,10 +38,52 @@ namespace Client.ViewModels
             set => SetProperty(ref _errorMessage, value);
         }
 
+        public bool IsTwoFactorAuthEnabled => _accountService.IsTwoFactorAuthenticationEnabled;
+
+        public Command GoBackCommand { get; }
+
+        public BaseViewModel()
+        {
+            _accountService = DependencyService.Get<IAccountService>();
+            GoBackCommand = new Command(OnBackButtonPresed);
+
+            _accountService.OnDataChanged += OnAccountDataChanged;
+            _accountService.OnDataChanged += ClearErrorMessage;
+            
+            OnAccountDataChanged();
+            ClearErrorMessage();
+        }
+
+        protected virtual void OnBackButtonPresed()
+        {
+            if (!string.IsNullOrEmpty(PreviousPage))
+            {
+                try
+                {
+                    Shell.Current.GoToAsync($"//{PreviousPage}");
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+        }
+
+        protected virtual void OnAccountDataChanged()
+        {
+            OnPropertyChanged(nameof(IsTwoFactorAuthEnabled));
+        }
+
+        protected void ClearErrorMessage()
+        {
+            ErrorMessage = string.Empty;
+        }
+
+
         protected bool SetProperty<T>(ref T backingStore,
-                                       T value,
-                                       [CallerMemberName] string propertyName = "",
-                                       Action onChanged = null)
+                                      T value,
+                                      [CallerMemberName] string propertyName = "",
+                                      Action onChanged = null)
         {
             if (EqualityComparer<T>.Default.Equals(backingStore, value))
                 return false;
@@ -49,7 +94,6 @@ namespace Client.ViewModels
             OnPropertyChanged(propertyName);
             return true;
         }
-
 
         #region INotifyPropertyChanged
 

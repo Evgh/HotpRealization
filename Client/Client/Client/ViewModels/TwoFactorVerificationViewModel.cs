@@ -1,17 +1,13 @@
-﻿using Client.Models;
-using Client.Models.Responces;
+﻿using Client.Models.Responces;
 using Client.Services;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Xamarin.Forms;
 
 namespace Client.ViewModels
 {
     [QueryProperty(nameof(Login), nameof(Login))]
+    [QueryProperty(nameof(PreviousPage), nameof(PreviousPage))]
     public class TwoFactorVerificationViewModel : BaseViewModel
     {
-        private readonly IAccountService _accountService;
         private readonly IServiceClient _serviceClient;
 
         public string Login { get; set; }
@@ -20,12 +16,9 @@ namespace Client.ViewModels
 
         public TwoFactorVerificationViewModel()
         {
-            _accountService = DependencyService.Get<IAccountService>();
             _serviceClient = DependencyService.Get<IServiceClient>();
 
             CheckIfVerifiedCommand = new Command(CheckIfVerified);
-
-            _accountService.OnLogin += () => ErrorMessage = string.Empty;
         }
 
         private async void CheckIfVerified()
@@ -34,7 +27,7 @@ namespace Client.ViewModels
 
             if(Utilities.VerificationHelper.TwoFactorParameter == null || string.IsNullOrEmpty(Login))
             {
-                await Shell.Current.GoToAsync("..");
+                OnBackButtonPresed();
                 return;
             }
 
@@ -54,8 +47,6 @@ namespace Client.ViewModels
             else
             {
                 ErrorMessage = string.Empty;
-                await Shell.Current.GoToAsync("..");
-
                 Utilities.VerificationHelper.TwoFactorParameter?.SetIfAuthSucceessful(true);
             }
 

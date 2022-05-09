@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Client.ViewModels"
+             xmlns:elements="clr-namespace:Client.Views.Elements"
              x:Class="Client.Views.TwoFactorConfirmChangesPage"
              Title="{Binding Title}"
              BackgroundColor="{StaticResource MyBackground}">
@@ -9,7 +10,11 @@
     <ContentPage.BindingContext>
         <vm:TwoFactorConfirmChangesViewModel/>
     </ContentPage.BindingContext>
-    
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Order="Primary" Text="Cancel" Priority="0" Command="{Binding GoBackCommand}"/>
+    </ContentPage.ToolbarItems>
+
     <ContentPage.Content>
         <Grid>
             <StackLayout 
@@ -43,15 +48,14 @@
                     WidthRequest="600"
                     FontSize="Title"/>
 
-
                 <Button 
-                    Text="I sent verification request in Authorizer"
+                    Text="I changed status in Authorizer"
                     VerticalOptions="Center"
                     HorizontalOptions="Center"
                     WidthRequest="270"
                     HeightRequest="50"
                     Margin="0,10,0,0"
-                    Command="{Binding CheckIfVerifiedCommand}"/>
+                    Command="{Binding CheckIfChangedCommand}"/>
 
                 <Label 
                     Margin="5,0,0,0"
@@ -63,18 +67,7 @@
                     WidthRequest="270"/>
             </StackLayout>
 
-            <StackLayout
-                HorizontalOptions="Fill"
-                VerticalOptions="Fill"
-                BackgroundColor="{StaticResource FadeColor}"
-                IsVisible="{Binding IsBusy}">
-
-                <ActivityIndicator 
-                    HorizontalOptions="CenterAndExpand"
-                    VerticalOptions="CenterAndExpand"
-                    IsRunning="True"/>
-            </StackLayout>
+            <elements:LoadingLayout IsVisible="{Binding IsBusy}"/>
         </Grid>
-
     </ContentPage.Content>
 </ContentPage>

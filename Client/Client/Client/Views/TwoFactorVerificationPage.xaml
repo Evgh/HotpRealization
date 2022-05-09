@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Client.ViewModels"
+             xmlns:elements="clr-namespace:Client.Views.Elements"
              x:Class="Client.Views.TwoFactorVerificationPage"
              Title="{Binding Title}"
              BackgroundColor="{StaticResource MyBackground}">
@@ -9,7 +10,11 @@
     <ContentPage.BindingContext>
         <vm:TwoFactorVerificationViewModel/>
     </ContentPage.BindingContext>
-    
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Order="Primary" Text="Cancel" Priority="0" Command="{Binding GoBackCommand}"/>
+    </ContentPage.ToolbarItems>
+
     <ContentPage.Content>
         <Grid>
             <StackLayout 
@@ -52,18 +57,7 @@
                     WidthRequest="270"/>
             </StackLayout>
 
-            <StackLayout
-                HorizontalOptions="Fill"
-                VerticalOptions="Fill"
-                BackgroundColor="{StaticResource FadeColor}"
-                IsVisible="{Binding IsBusy}">
-
-                <ActivityIndicator 
-                    HorizontalOptions="CenterAndExpand"
-                    VerticalOptions="CenterAndExpand"
-                    IsRunning="True"/>
-            </StackLayout>
+            <elements:LoadingLayout IsVisible="{Binding IsBusy}"/>
         </Grid>
-
     </ContentPage.Content>
 </ContentPage>

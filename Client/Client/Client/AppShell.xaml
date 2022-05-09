@@ -88,6 +88,14 @@
         <ShellContent Route="RegistrationPage" ContentTemplate="{DataTemplate local:RegistrationPage}" />
     </TabBar>
 
+    <TabBar>
+        <ShellContent Route="TwoFactorVerificationPage" ContentTemplate="{DataTemplate local:TwoFactorVerificationPage}" />
+    </TabBar>
+
+    <TabBar>
+        <ShellContent Route="TwoFactorConfirmChangesPage" ContentTemplate="{DataTemplate local:TwoFactorConfirmChangesPage}" />
+    </TabBar>
+
     <!-- 
         When the Flyout is visible this defines the content to display in the flyout.
         FlyoutDisplayOptions="AsMultipleItems" will create a separate flyout item for each child element    

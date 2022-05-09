@@ -1,10 +1,6 @@
 ﻿using Client.Models;
 using Client.Services;
 using Client.Views;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace Client.ViewModels
@@ -16,23 +12,6 @@ namespace Client.ViewModels
         private const string DISABLED_BUTTON_TITLE = "Enable";
         private const string DISABLED_DESCRIPTION = "Two Factor Authentication is disabled";
 
-
-        IAccountService _accountService;
-
-        private bool _isTwoFactorAuthEnabled;
-
-        public bool IsTwoFactorAuthEnabled
-        {
-            get => _isTwoFactorAuthEnabled;
-            set
-            {
-                SetProperty(ref _isTwoFactorAuthEnabled, value);
-
-                OnPropertyChanged(nameof(ButtonTitle));
-                OnPropertyChanged(nameof(Description));
-            }
-        }
-
         public string ButtonTitle => IsTwoFactorAuthEnabled ? ENABLED_BUTTON_TITLE : DISABLED_BUTTON_TITLE;
         public string Description => IsTwoFactorAuthEnabled ? ENABLED_DESCRIPTION : DISABLED_DESCRIPTION;
 
@@ -40,21 +19,19 @@ namespace Client.ViewModels
 
         public SettingsViewModel()
         {
-            _accountService = DependencyService.Get<IAccountService>();
-
             EnableDisableTwoFactorAuthCommand = new Command(EnableDisableTwoFactorAuth);
 
-            OnAuthStatusChanged();
-            ClearErrorMessage();
+            Title = "Settings";
+            OnAccountDataChanged();
+        }
 
-            _accountService.OnDataChanged += OnAuthStatusChanged;
-            _accountService.OnLogin += OnAuthStatusChanged;
-            _accountService.OnLogout += OnAuthStatusChanged;
+        protected override void OnAccountDataChanged()
+        {
+            base.OnAccountDataChanged();
 
-            _accountService.OnLogin += ClearErrorMessage;
-            _accountService.OnLogout += ClearErrorMessage;
-
-            Title = "Settings";            
+            OnPropertyChanged(nameof(IsTwoFactorAuthEnabled));
+            OnPropertyChanged(nameof(ButtonTitle));
+            OnPropertyChanged(nameof(Description));
         }
 
         private async void EnableDisableTwoFactorAuth()
@@ -63,7 +40,7 @@ namespace Client.ViewModels
             authParameter.OnAuthExecuted += ChangeTwoFactorStatus;
             Utilities.VerificationHelper.TwoFactorParameter = authParameter;
 
-            await Shell.Current.GoToAsync($"/{nameof(TwoFactorConfirmChangesPage)}");
+            await Shell.Current.GoToAsync($"//{nameof(TwoFactorConfirmChangesPage)}?{nameof(PreviousPage)}={nameof(SettingsPage)}");
         }
 
         private void ChangeTwoFactorStatus(bool wasVerified)
@@ -81,19 +58,6 @@ namespace Client.ViewModels
             }
 
             IsBusy = false;
-        }
-
-        private async void ClearErrorMessage()
-        {
-            ErrorMessage = string.Empty;
-        }
-
-        private async void OnAuthStatusChanged()
-        {
-            _isTwoFactorAuthEnabled = _accountService.IsTwoFactorAuthenticationEnabled;
-            OnPropertyChanged(nameof(IsTwoFactorAuthEnabled));
-            OnPropertyChanged(nameof(ButtonTitle));
-            OnPropertyChanged(nameof(Description));
         }
     }
 }
