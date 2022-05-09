@@ -55,22 +55,26 @@ namespace HotpServer.Services.Implementations
         {
             User user = await GetUserByLoginFromDdAsync(login);
 
-            if (!string.IsNullOrEmpty(secretKey))
+            if(user.IsTwoFactorAuthenticationEnabled ^ isEnabled)
             {
-                user.SecretKeyBase64 = secretKey;
-                user.HotpCounter = 0;
-                user.IsTwoFactorConfirmed = false;
+                if (!string.IsNullOrEmpty(secretKey))
+                {
+                    user.SecretKeyBase64 = secretKey;
+                    user.HotpCounter = 0;
+                    user.IsTwoFactorConfirmed = false;
+                }
+
+                if (user.IsTwoFactorAuthenticationEnabled || !string.IsNullOrEmpty(user.SecretKeyBase64)) // 1) enabled or 2) disabled and has secret key
+                {
+                    user.IsTwoFactorAuthenticationEnabled = isEnabled;
+                }
+
+                if (!user.IsTwoFactorAuthenticationEnabled)
+                    user.IsTwoFactorConfirmed = false;
+
+                await _dataLayer.AddOrUpdateUserAsync(user);
             }
 
-            if (user.IsTwoFactorAuthenticationEnabled || !string.IsNullOrEmpty(user.SecretKeyBase64)) // 1) enabled or 2) disabled and has secret key
-            {
-                user.IsTwoFactorAuthenticationEnabled = isEnabled;
-            }
-
-            if (!user.IsTwoFactorAuthenticationEnabled) 
-                user.IsTwoFactorConfirmed = false;
-
-            await _dataLayer.AddOrUpdateUserAsync(user);
             return user;
         }
 
