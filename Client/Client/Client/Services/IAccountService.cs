@@ -17,8 +17,8 @@ namespace Client.Services
         bool IsTwoFactorAuthenticationEnabled { get; set; }
 
         Task<BaseResponce<User>> RegisterUser(string login, string password);
-        Task<BaseResponce<User>> AuthenticateUserByPassword(string login, string password);
-        void Logout();
-        Task<bool> ChangeTwoFactorStatus(bool isEnabled);
+        void ExecuteLogin(User user);
+        void ExecuteLogout();
+        void ChangeTwoFactorStatus(bool isEnabled);
     }
 }

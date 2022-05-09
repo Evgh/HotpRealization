@@ -59,13 +59,11 @@ namespace Client.ViewModels
 
         private async void EnableDisableTwoFactorAuth()
         {
-            //ChangeTwoFactorStatus(!IsTwoFactorAuthEnabled);
-
             var authParameter = new TwoFactorAuthParameter();
             authParameter.OnAuthExecuted += ChangeTwoFactorStatus;
             Utilities.VerificationHelper.TwoFactorParameter = authParameter;
 
-            await Shell.Current.GoToAsync($"/{nameof(TwoFactorVerificationPage)}");
+            await Shell.Current.GoToAsync($"/{nameof(TwoFactorConfirmChangesPage)}");
         }
 
         private void ChangeTwoFactorStatus(bool wasVerified)
@@ -74,10 +72,8 @@ namespace Client.ViewModels
 
             if (wasVerified)
             {
-                if (_accountService.ChangeTwoFactorStatus(!_accountService.IsTwoFactorAuthenticationEnabled).Result)
-                    ClearErrorMessage();
-                else
-                    ErrorMessage = COMMON_ERROR_MESSAGE;
+                _accountService.ChangeTwoFactorStatus(!_accountService.IsTwoFactorAuthenticationEnabled);
+                ClearErrorMessage();
             }
             else
             {

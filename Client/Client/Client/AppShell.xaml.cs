@@ -13,6 +13,7 @@ namespace Client
             InitializeComponent();
 
             Routing.RegisterRoute(nameof(TwoFactorVerificationPage), typeof(TwoFactorVerificationPage));
+            Routing.RegisterRoute(nameof(TwoFactorConfirmChangesPage), typeof(TwoFactorConfirmChangesPage));
         }
 
         private async void OnMenuItemClicked(object sender, EventArgs e)

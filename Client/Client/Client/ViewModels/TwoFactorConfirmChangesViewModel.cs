@@ -8,17 +8,16 @@ using Xamarin.Forms;
 
 namespace Client.ViewModels
 {
-    [QueryProperty(nameof(Login), nameof(Login))]
-    public class TwoFactorVerificationViewModel : BaseViewModel
+    public class TwoFactorConfirmChangesViewModel : BaseViewModel
     {
         private readonly IAccountService _accountService;
         private readonly IServiceClient _serviceClient;
 
-        public string Login { get; set; }
+        public bool IsTwoFactorEnabled => _accountService.IsTwoFactorAuthenticationEnabled;
 
         public Command CheckIfVerifiedCommand { get; }
 
-        public TwoFactorVerificationViewModel()
+        public TwoFactorConfirmChangesViewModel()
         {
             _accountService = DependencyService.Get<IAccountService>();
             _serviceClient = DependencyService.Get<IServiceClient>();
@@ -32,24 +31,23 @@ namespace Client.ViewModels
         {
             IsBusy = true;
 
-            if(Utilities.VerificationHelper.TwoFactorParameter == null || string.IsNullOrEmpty(Login))
+            if(Utilities.VerificationHelper.TwoFactorParameter == null)
             {
                 await Shell.Current.GoToAsync("..");
                 return;
             }
 
-            BaseResponce<bool?> responce = await _serviceClient.GetIsTwoFactorConfirmed(Login);
+            BaseResponce<bool?> responce = await _serviceClient.GetIsTwoFactorEnabled(_accountService.Login);
 
             if (!responce.IsSuccess
                || !responce.Content.HasValue)
             {
                 ErrorMessage = COMMON_ERROR_MESSAGE;
             }
-            else if (!responce.Content.Value)
+            else if (responce.Content.Value.Equals(_accountService.IsTwoFactorAuthenticationEnabled))
             {
-                ErrorMessage = "Verification wasn't provided. Please, execute verification in app Autorizer or repeat it you have already done in";
-
                 Utilities.VerificationHelper.TwoFactorParameter?.SetIfAuthSucceessful(false);
+                ErrorMessage = "Two factor authentication status in authorizer wasn't changed. Please, try again";
             }
             else
             {
@@ -57,6 +55,7 @@ namespace Client.ViewModels
                 await Shell.Current.GoToAsync("..");
 
                 Utilities.VerificationHelper.TwoFactorParameter?.SetIfAuthSucceessful(true);
+                Utilities.VerificationHelper.TwoFactorParameter = null;                
             }
 
             IsBusy = false;

@@ -2,12 +2,12 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Client.ViewModels"
-             x:Class="Client.Views.TwoFactorVerificationPage"
+             x:Class="Client.Views.TwoFactorConfirmChangesPage"
              Title="{Binding Title}"
              BackgroundColor="{StaticResource MyBackground}">
     
     <ContentPage.BindingContext>
-        <vm:TwoFactorVerificationViewModel/>
+        <vm:TwoFactorConfirmChangesViewModel/>
     </ContentPage.BindingContext>
     
     <ContentPage.Content>
@@ -26,14 +26,25 @@
                     Margin="0,30,0,30"/>
 
                 <Label 
-                    Text="Please, execute two factor authentication in app Authorizer"
+                    IsVisible="{Binding IsTwoFactorEnabled}"
+                    Text="Please, disable two factor authentication in app Authorizer"
                     VerticalOptions="Center"
                     HorizontalOptions="Center"
                     HorizontalTextAlignment="Center"
                     WidthRequest="600"
                     FontSize="Title"/>
 
-                <Button
+                <Label 
+                    IsVisible="{Binding IsTwoFactorEnabled, Converter={StaticResource InvertedBooleanConverter}}"
+                    Text="Please, enable two factor authentication in app Authorizer"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center"
+                    HorizontalTextAlignment="Center"
+                    WidthRequest="600"
+                    FontSize="Title"/>
+
+
+                <Button 
                     Text="I sent verification request in Authorizer"
                     VerticalOptions="Center"
                     HorizontalOptions="Center"

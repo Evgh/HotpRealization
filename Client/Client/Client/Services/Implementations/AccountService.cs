@@ -61,17 +61,16 @@ namespace Client.Services.Implementations
             return registrationResponce;
         }
 
-        public async Task<BaseResponce<User>> AuthenticateUserByPassword(string login, string password)
+        public void ExecuteLogin(User user)
         {
-            BaseResponce<User> authResponce = await _serviceClient.PostAuthenticateUserByPassword(login, password);
+            UserSettings.Id = user.Id;
+            Login = UserSettings.Login = user.Login;
+            IsTwoFactorAuthenticationEnabled = UserSettings.IsTwoFactorAuthenticationEnabled = user.IsTwoFactorAuthenticationEnabled;
 
-            if (authResponce.Content != null)
-                ExecuteLogin(authResponce.Content);
-
-            return authResponce;
+            OnLogin?.Invoke();
         }
 
-        public void Logout()
+        public void ExecuteLogout()
         {
             UserSettings.Id = 0;
             Login = UserSettings.Login = string.Empty;
@@ -80,36 +79,9 @@ namespace Client.Services.Implementations
             OnLogout?.Invoke();
         }
 
-        public async Task<bool> ChangeTwoFactorStatus(bool isEnabled)
+        public void ChangeTwoFactorStatus(bool isEnabled)
         {
-            string code = string.Empty;
-
-            var changeStatusResponce = await _serviceClient.PostChangeTwoFactorStatus(Login, "", isEnabled);
-
-            if (changeStatusResponce.StatusCode.Equals(HttpStatusCode.NoContent) ||
-                !changeStatusResponce.IsSuccess)
-            {
-                return false;
-            }
-            else
-            {
-                var userUpdated = changeStatusResponce.Content;
-                IsTwoFactorAuthenticationEnabled = UserSettings.IsTwoFactorAuthenticationEnabled = userUpdated.IsTwoFactorAuthenticationEnabled;
-                return true;
-            }
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        private async void ExecuteLogin(User user)
-        {
-            UserSettings.Id = user.Id;
-            Login = UserSettings.Login = user.Login;
-            IsTwoFactorAuthenticationEnabled = UserSettings.IsTwoFactorAuthenticationEnabled = user.IsTwoFactorAuthenticationEnabled;
-
-            OnLogin?.Invoke();
+            IsTwoFactorAuthenticationEnabled = UserSettings.IsTwoFactorAuthenticationEnabled = isEnabled;
         }
 
         #endregion

@@ -14,25 +14,25 @@ namespace Client.Services.Implementations
 {
     public class ServiceClient : IServiceClient
     {
-        private const string BASE_ADDRESS = "https://54b0-37-214-83-59.ngrok.io/api/";
+        private const string BASE_ADDRESS = "https://42b7-37-214-57-105.ngrok.io/api/";
 
         private readonly HttpClient _httpClient;
 
         public ServiceClient()
         {
-            _httpClient = new HttpClient(new HttpClientHandler()
-                {
-                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
-                    {
-                        //bypass
-                        return true;
-                    },
-                }
-               , false);
+            _httpClient = new HttpClient();
+            //(new HttpClientHandler()
+            //{
+            //    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
+            //    {
+            //            //bypass
+            //            return true;
+            //    },
+            //}
+            //   , false);
         }
 
         #region Public Methods
-
         public async Task<BaseResponce<bool?>> GetIsTwoFactorConfirmed(string login)
         {
             try
@@ -49,7 +49,36 @@ namespace Client.Services.Implementations
                 if (serverResponce.IsSuccessStatusCode 
                    && !serverResponce.StatusCode.Equals(HttpStatusCode.NoContent))
                 {
-                    responce.Content = bool.Parse(await serverResponce.Content.ReadAsStringAsync());   
+                    var content = await serverResponce.Content.ReadAsStringAsync();
+                    responce.Content = bool.Parse(content);   
+                }
+
+                return responce;
+            }
+            catch (Exception ex)
+            {
+                return CreateErrorBoolResponce();
+            }
+        }
+
+        public async Task<BaseResponce<bool?>> GetIsTwoFactorEnabled(string login)
+        {
+            try
+            {
+                var serverResponce = await _httpClient.GetAsync(BASE_ADDRESS + $"TwoFactorAuthentication/IsTwoFactorAuthEnabled?login={login}");
+
+                var responce = new BaseResponce<bool?>()
+                {
+                    IsSuccess = serverResponce.IsSuccessStatusCode,
+                    StatusCode = serverResponce.StatusCode,
+                    ErrorMessage = serverResponce.ReasonPhrase
+                };
+
+                if (serverResponce.IsSuccessStatusCode
+                   && !serverResponce.StatusCode.Equals(HttpStatusCode.NoContent))
+                {
+                    var content = await serverResponce.Content.ReadAsStringAsync();
+                    responce.Content = bool.Parse(content);
                 }
 
                 return responce;
@@ -97,26 +126,6 @@ namespace Client.Services.Implementations
                 return CreateErrorUserResponce();
             }
 
-        }
-
-        public async Task<BaseResponce<User>> PostChangeTwoFactorStatus(string login, string keyBase64, bool isEnabled)
-        {
-            try
-            {
-                var changeStatusRequest = new ChangeTwoFactorStatusRequest()
-                {
-                    Login = login,
-                    KeyBase64 = keyBase64,
-                    IsEnabled = isEnabled
-                };
-
-                var changeResponce = await _httpClient.PostAsync(BASE_ADDRESS + "TwoFactorAuthentication/ChangeTwoFactorStatus", FormPostContentAndSetHeaders(changeStatusRequest));
-                return await FormUserResponce(changeResponce);
-            }
-            catch (Exception e)
-            {
-                return CreateErrorUserResponce();
-            }
         }
 
         public async Task<bool> PostConfirmTwoFactorAuth(string login, string code)

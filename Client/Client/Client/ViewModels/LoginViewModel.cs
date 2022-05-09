@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace Client.ViewModels
@@ -13,6 +14,7 @@ namespace Client.ViewModels
     public class LoginViewModel : BaseViewModel
     {
         private readonly IAccountService _accountService;
+        private readonly IServiceClient _serviceClient;
 
         private string _login;
         private string _password;
@@ -34,6 +36,7 @@ namespace Client.ViewModels
         public LoginViewModel()
         {
             _accountService = DependencyService.Get<IAccountService>();
+            _serviceClient = DependencyService.Get<IServiceClient>();
 
             LoginCommand = new Command(ExecuteLogin);
             RegistrationCommand = new Command(ExecuteRegistration);
@@ -47,29 +50,52 @@ namespace Client.ViewModels
             if (ValidateForLogin())
             {
                 IsBusy = true;
-                var loginResponce = await _accountService.AuthenticateUserByPassword(Login.Trim(), Password.Trim());
+                var loginResponce = await _serviceClient.PostAuthenticateUserByPassword(Login.Trim(), Password.Trim());
                 IsBusy = false;
 
                 if (ValidateLoginResponce(loginResponce))
                 {
                     ClearFields();
 
-                    var authParameter = new TwoFactorAuthParameter();
-                    authParameter.OnAuthExecuted += TwoFactorAuthCallback;
-                    Utilities.VerificationHelper.TwoFactorParameter = authParameter;
+                    if (loginResponce.Content.IsTwoFactorAuthenticationEnabled)
+                    {
+                        var authParameter = new TwoFactorAuthParameter();
+                        authParameter.OnAuthExecuted += (isVerified) => TwoFactorAuthCallback(isVerified, loginResponce.Content);
 
-                    await Shell.Current.GoToAsync($"/{nameof(TwoFactorVerificationPage)}");
+                        Utilities.VerificationHelper.TwoFactorParameter = authParameter;
+
+                        await Shell.Current.GoToAsync($"/{nameof(TwoFactorVerificationPage)}?{nameof(TwoFactorVerificationViewModel.Login)}={loginResponce.Content.Login}");
+                    }
+                    else
+                    {
+                        await ExecuteSuccessfulLogin(loginResponce.Content);
+                    }
                 }
             }
         }
 
-        private void TwoFactorAuthCallback(bool isVerified)
+        private async void TwoFactorAuthCallback(bool isVerified, User user)
         {
             if (isVerified)
-                Shell.Current.GoToAsync($"//{nameof(HomePage)}").GetAwaiter();
+            {
+                var isTwoFactorStillEnabled = await _serviceClient.GetIsTwoFactorEnabled(_accountService.Login);
+                user.IsTwoFactorAuthenticationEnabled = (isTwoFactorStillEnabled?.Content.HasValue ?? false) ? (bool)isTwoFactorStillEnabled?.Content.Value : user.IsTwoFactorAuthenticationEnabled;
 
+                Utilities.VerificationHelper.TwoFactorParameter = null;
+                ExecuteSuccessfulLogin(user).GetAwaiter(); 
+            }
             else
-                _accountService.Logout();
+            {
+                _accountService.ExecuteLogout();
+            }
+        }
+
+        private async Task ExecuteSuccessfulLogin(User user)
+        {
+            _accountService.ExecuteLogin(user);
+
+            await Shell.Current.GoToAsync($"..");
+            await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
         }
 
         private async void ExecuteRegistration()
