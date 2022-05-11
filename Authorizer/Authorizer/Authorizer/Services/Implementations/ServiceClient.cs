@@ -14,7 +14,7 @@ namespace Authorizer.Services.Implementations
 {
     public class ServiceClient : IServiceClient
     {
-        private const string BASE_ADDRESS = "https://42b7-37-214-57-105.ngrok.io/api/";
+        private const string BASE_ADDRESS = "ADRESS_OF_DEPLOYED_SERVER/api/";
 
         private readonly HttpClient _httpClient;
 
