@@ -1,5 +1,6 @@
 ﻿using Client.Models.Responces;
 using Client.Services;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace Client.ViewModels
@@ -19,6 +20,12 @@ namespace Client.ViewModels
             _serviceClient = DependencyService.Get<IServiceClient>();
 
             CheckIfVerifiedCommand = new Command(CheckIfVerified);
+        }
+
+        protected override Task OnBackButtonPresed()
+        {
+            _accountService.ExecuteLogout();
+            return base.OnBackButtonPresed();
         }
 
         private async void CheckIfVerified()

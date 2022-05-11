@@ -82,10 +82,6 @@ namespace Client.ViewModels
                 Utilities.VerificationHelper.TwoFactorParameter = null;
                 ExecuteSuccessfulLogin(user).GetAwaiter(); 
             }
-            else
-            {
-                _accountService.ExecuteLogout();
-            }
         }
 
         private async Task ExecuteSuccessfulLogin(User user)
