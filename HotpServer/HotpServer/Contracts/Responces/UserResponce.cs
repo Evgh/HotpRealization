@@ -1,6 +1,6 @@
-﻿namespace HotpServer.Models.Dto
+﻿namespace HotpServer.Contracts.Responces
 {
-    public class UserDto
+    public class UserResponce
     {
         public int Id { get; set; }
         public string Login { get; set; }

@@ -1,10 +1,8 @@
-﻿using HotpServer.Models.Dto;
-using HotpServer.Services;
+﻿using HotpServer.Contracts.Responces;
 using HotpServer.Storage;
 using HotpServer.Storage.Implementations;
 using HotpServer.Storage.Models;
 using HotpServer.Utilities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotpServer.Controllers
@@ -22,44 +20,55 @@ namespace HotpServer.Controllers
         public TestController(ApplicationContext applicationContext, 
                               IDataLayer dataLayer) : base()
         {
-            _applicationContext = applicationContext;
-            _dataLayer = dataLayer;
+            _applicationContext = applicationContext ?? throw new ArgumentNullException(nameof(applicationContext));
+            _dataLayer = dataLayer ?? throw new ArgumentNullException(nameof(dataLayer));
         }
 
-        [HttpGet("GetAll")]
-        public async Task<IList<User>> Get()
+        [HttpGet("All")]
+        public async Task<ActionResult<IList<User>>> GetAll()
         {
-            return _applicationContext.Users.ToList();
+            return Ok(_applicationContext.Users.ToList());
         }
 
-        [HttpGet("UserById")]
-        public async Task<User> Get([FromQuery]int id)
+        [HttpGet("UserById/{id}")]
+        public async Task<ActionResult<User>> GetUserById([FromRoute] int id)
         {
-            return await _dataLayer.GetUserByIdAsync(id);
+            User user = await _dataLayer.GetUserByIdAsync(id);
+
+            if (user != null)
+                return Ok(user);
+                
+            return NotFound();
         }
 
-        [HttpGet("UserByLogin")]
-        public async Task<User> Get([FromQuery] string login)
+        [HttpGet("UserByLogin/{login}")]
+        public async Task<ActionResult<User>> GetUserByLogin([FromRoute] string login)
         {
-            return await _dataLayer.GetUserByLoginAsync(login);
+            User user = await _dataLayer.GetUserByLoginAsync(login);
+
+            if (user != null)
+                return Ok(user);
+            
+            return NotFound();
         }
 
-        [HttpGet("MapUser")]
-        public async Task<UserDto> MapUser()
+        [HttpGet("TestMapping")]
+        public async Task<ActionResult<UserResponce>> MapUser()
         {
             User user = await _dataLayer.GetUserByIdAsync(1);
 
             if (user != null)
-            {
-                return MapperBuilder.CreateMapper<User, UserDto>().Map<User, UserDto>(user);
-            }
-            return null;
+                return Ok(MapperBuilder.CreateMapper<User, UserResponce>().Map<User, UserResponce>(user));
+
+            return NotFound();
         }
 
-        [HttpPost]
-        public async Task Task([FromBody] User user)
+        [HttpPost("CreateUser")]
+        public async Task<ActionResult<User>> CreateUser([FromBody] User user)
         {
             await _dataLayer.AddOrUpdateUserAsync(user);
+
+            return Ok();
         }
     }
 

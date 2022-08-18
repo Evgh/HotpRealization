@@ -1,5 +1,4 @@
-﻿using HotpServer.Models.Requests;
-using HotpServer.Storage.Models;
+﻿using HotpServer.Storage.Models;
 
 namespace HotpServer.Services
 {

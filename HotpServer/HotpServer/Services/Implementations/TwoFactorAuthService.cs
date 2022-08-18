@@ -51,11 +51,14 @@ namespace HotpServer.Services.Implementations
             return true;
         }
 
-        public async Task<User> ChangeTwoFactorStatus(string login, bool isEnabled, string secretKey = "")
+        public async Task<User> ChangeTwoFactorStatus(string login, string password, bool isEnabled, string secretKey = "")
         {
             User user = await GetUserByLoginFromDdAsync(login);
 
-            if(user.IsTwoFactorAuthenticationEnabled ^ isEnabled)
+            if (!user.Password.Equals(password))
+                throw new InvalidCredentialsException();
+
+            if (user.IsTwoFactorAuthenticationEnabled ^ isEnabled)
             {
                 if (!string.IsNullOrEmpty(secretKey))
                 {
